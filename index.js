@@ -1,4 +1,6 @@
+const closedReservationTrigger = require('./triggers/closed_reservation');
 const newReservationTrigger = require('./triggers/new_reservation');
+const newCustomerTrigger = require('./triggers/new_customer');
 
 const {
     config: authentication,
@@ -23,7 +25,9 @@ const App = {
 
     // If you want your trigger to show up, you better include it here!
     triggers: {
+        [closedReservationTrigger.key]: closedReservationTrigger,
         [newReservationTrigger.key]: newReservationTrigger,
+        [newCustomerTrigger.key]: newCustomerTrigger,
     },
 
     // If you want your searches to show up, you better include it here!

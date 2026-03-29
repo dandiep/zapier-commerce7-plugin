@@ -49,7 +49,7 @@ module.exports = {
                 label: 'Tenant ID',
                 required: true,
                 type: 'string',
-                helpText: 'Your Commerce7 Tenant ID'
+                helpText: 'Your Commerce7 tenant ID. You can usually find it in your Commerce7 admin URL or account settings. See https://documentation.commerce7.com/ for account details.'
             }
         ],
         connectionLabel: '{{tenant_id}}',

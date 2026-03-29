@@ -1,4 +1,4 @@
-module.exports = {
+module.exports = ({
     "reservations": [
         {
             "id": "1a4ce7c6-2959-48d1-92ba-c6ce63c75e01",
@@ -242,4 +242,4 @@ module.exports = {
         }
     ],
     "total": 1
-}
+}).reservations[0];
