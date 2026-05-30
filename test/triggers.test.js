@@ -37,6 +37,16 @@ const buildCustomerZ = (customers, requestSpy) => ({
 });
 
 describe('reservation triggers', () => {
+    const now = new Date('2026-03-28T19:00:00.000Z').getTime();
+
+    beforeEach(() => {
+        jest.spyOn(Date, 'now').mockReturnValue(now);
+    });
+
+    afterEach(() => {
+        Date.now.mockRestore();
+    });
+
     it('registers the closed reservation trigger with the app', () => {
         expect(App.triggers.closed_reservation).toBe(closedReservationTrigger);
     });
@@ -46,9 +56,10 @@ describe('reservation triggers', () => {
         const reservations = [
             {
                 id: 'reservation-1',
-                status: 'Closed',
+                status: 'Closed Out',
                 guestCount: 2,
                 reservationDate: '2026-03-28T19:00:00.000Z',
+                closeOutTime: '2026-03-28T18:00:00.000Z',
                 notes: 'Window seat',
                 updatedAt: '2026-03-28T18:00:00.000Z',
             },
@@ -74,13 +85,49 @@ describe('reservation triggers', () => {
         }));
         expect(result).toHaveLength(1);
         expect(result[0]).toEqual(expect.objectContaining({
-            id: 'reservation-1-closed',
+            id: `reservation-1-closed-${new Date('2026-03-28T18:00:00.000Z').getTime()}`,
             originalId: 'reservation-1',
-            status: 'Closed',
+            status: 'Closed Out',
             _meta: {
                 after: new Date('2026-03-28T18:05:00.000Z').getTime(),
             },
         }));
+    });
+
+    it('does not return old closed reservations that were updated for unrelated reasons', async () => {
+        const requestSpy = jest.fn();
+        const reservations = [
+            {
+                id: 'reservation-old',
+                status: 'Closed Out',
+                guestCount: 2,
+                reservationDate: '2026-03-27T19:00:00.000Z',
+                closeOutTime: '2026-03-27T18:00:00.000Z',
+                notes: 'Closed more than a day ago',
+                updatedAt: '2026-03-28T18:00:00.000Z',
+            },
+            {
+                id: 'reservation-new',
+                status: 'Closed Out',
+                guestCount: 4,
+                reservationDate: '2026-03-28T17:30:00.000Z',
+                closeOutTime: '2026-03-28T18:02:00.000Z',
+                notes: '',
+                updatedAt: '2026-03-28T18:03:00.000Z',
+            },
+        ];
+
+        const result = await closedReservationTrigger.operation.perform(
+            buildZ(reservations, requestSpy),
+            buildBundle('2026-03-28T17:00:00.000Z')
+        );
+
+        expect(result).toHaveLength(1);
+        expect(result[0]).toEqual(expect.objectContaining({
+            id: `reservation-new-closed-${new Date('2026-03-28T18:02:00.000Z').getTime()}`,
+            originalId: 'reservation-new',
+        }));
+        expect(result[0]._meta.after).toBe(new Date('2026-03-28T18:03:00.000Z').getTime());
     });
 
     it('uses a hashed id for the reservation trigger so updates emit as new items', async () => {

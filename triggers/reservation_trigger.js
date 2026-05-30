@@ -32,6 +32,8 @@ const reservationOutputFields = [
     { key: 'id', label: 'ID', type: 'string', primary: true },
     { key: 'createdAt', label: 'Created At', type: 'datetime' },
     { key: 'updatedAt', label: 'Updated At', type: 'datetime' },
+    { key: 'closeOutTime', label: 'Close Out Time', type: 'datetime' },
+    { key: 'reservationCloseOutDate', label: 'Reservation Close Out Date', type: 'datetime' },
     { key: 'status', label: 'Status', type: 'string' },
     { key: 'customerName', label: 'Customer Name', type: 'string' },
     { key: 'reservationDate', label: 'Reservation Date', type: 'datetime' },
@@ -57,6 +59,7 @@ const createPerform = ({
 }) => {
     return (z, bundle) => {
         const afterTimestamp = getAfterTimestamp(bundle);
+        const nowTimestamp = Date.now();
         const params = {
             updatedAt: `gt:${new Date(afterTimestamp).toISOString()}`,
         };
@@ -64,7 +67,9 @@ const createPerform = ({
         return makeRequest(z, bundle, 'reservation', params)
             .then((response) => {
                 const reservations = response.reservations || [];
-                const matchingReservations = reservations.filter(filterReservation);
+                const matchingReservations = reservations.filter((reservation) => (
+                    filterReservation(reservation, afterTimestamp, nowTimestamp)
+                ));
 
                 const highestUpdatedAt = reservations.reduce((highest, reservation) => {
                     const updatedAt = new Date(reservation.updatedAt).getTime();
