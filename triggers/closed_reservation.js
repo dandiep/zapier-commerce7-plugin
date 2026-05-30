@@ -3,6 +3,7 @@ const sample = require('../samples/sample_closed_reservation');
 const { createReservationTrigger } = require('./reservation_trigger');
 
 const CLOSED_STATUS = 'Closed Out';
+const CLOSED_RESERVATION_LOOKBACK_HOURS = 4;
 const MAX_CLOSED_LOOKBACK_HOURS = 24;
 const HOUR_IN_MS = 60 * 60 * 1000;
 
@@ -21,6 +22,7 @@ module.exports = createReservationTrigger({
     label: 'Closed Reservation',
     description: 'Triggers when a reservation is closed in Commerce7.',
     sample,
+    defaultLookbackHours: CLOSED_RESERVATION_LOOKBACK_HOURS,
     filterReservation: (reservation, afterTimestamp, nowTimestamp) => {
         const closeOutTimestamp = getCloseOutTimestamp(reservation);
         const recentCloseOutCutoff = nowTimestamp - (MAX_CLOSED_LOOKBACK_HOURS * HOUR_IN_MS);

@@ -11,7 +11,7 @@ const buildDefaultId = (reservation) => {
     return `${reservation.id}-${hash}`;
 };
 
-const getAfterTimestamp = (bundle) => {
+const getAfterTimestamp = (bundle, defaultLookbackHours = DEFAULT_LOOKBACK_HOURS) => {
     const inputData = bundle.inputData || {};
     const afterValue = inputData.after;
 
@@ -23,8 +23,8 @@ const getAfterTimestamp = (bundle) => {
         }
     }
 
-    const after = new Date();
-    after.setHours(after.getHours() - DEFAULT_LOOKBACK_HOURS);
+    const after = new Date(Date.now());
+    after.setHours(after.getHours() - defaultLookbackHours);
     return after.getTime();
 };
 
@@ -56,9 +56,10 @@ const reservationOutputFields = [
 const createPerform = ({
     filterReservation = () => true,
     makeId = buildDefaultId,
+    defaultLookbackHours = DEFAULT_LOOKBACK_HOURS,
 }) => {
     return (z, bundle) => {
-        const afterTimestamp = getAfterTimestamp(bundle);
+        const afterTimestamp = getAfterTimestamp(bundle, defaultLookbackHours);
         const nowTimestamp = Date.now();
         const params = {
             updatedAt: `gt:${new Date(afterTimestamp).toISOString()}`,
@@ -100,6 +101,7 @@ const createReservationTrigger = ({
     sample,
     filterReservation,
     makeId,
+    defaultLookbackHours,
 }) => ({
     key,
     noun: 'Reservation',
@@ -111,7 +113,7 @@ const createReservationTrigger = ({
 
     operation: {
         type: 'polling',
-        perform: createPerform({ filterReservation, makeId }),
+        perform: createPerform({ filterReservation, makeId, defaultLookbackHours }),
         inputFields: [],
         sample,
         outputFields: reservationOutputFields,

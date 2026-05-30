@@ -9,7 +9,6 @@ const addHttpHeaders = (request, z, bundle) => {
     request.headers.Authorization = `Basic ${base64}`;
 
     request.headers.Tenant = bundle.authData.tenant_id;
-    z.console.log("adding request headers", request);
 
     return request;
 };

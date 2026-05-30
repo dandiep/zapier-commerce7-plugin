@@ -51,6 +51,33 @@ describe('reservation triggers', () => {
         expect(App.triggers.closed_reservation).toBe(closedReservationTrigger);
     });
 
+    it('uses a four hour default lookback for the closed trigger', async () => {
+        const requestSpy = jest.fn();
+        const reservations = [
+            {
+                id: 'reservation-4-hour',
+                status: 'Closed Out',
+                guestCount: 2,
+                reservationDate: '2026-03-28T15:30:00.000Z',
+                closeOutTime: '2026-03-28T16:00:00.000Z',
+                notes: '',
+                updatedAt: '2026-03-28T16:01:00.000Z',
+            },
+        ];
+
+        const result = await closedReservationTrigger.operation.perform(
+            buildZ(reservations, requestSpy),
+            buildBundle()
+        );
+
+        expect(requestSpy).toHaveBeenCalledWith(expect.objectContaining({
+            params: {
+                updatedAt: 'gt:2026-03-28T15:00:00.000Z',
+            },
+        }));
+        expect(result).toHaveLength(1);
+    });
+
     it('returns only closed reservations for the closed trigger', async () => {
         const requestSpy = jest.fn();
         const reservations = [
@@ -150,6 +177,11 @@ describe('reservation triggers', () => {
 
         expect(requestSpy).toHaveBeenCalled();
         expect(result).toHaveLength(1);
+        expect(requestSpy).toHaveBeenCalledWith(expect.objectContaining({
+            params: {
+                updatedAt: 'gt:2026-03-28T18:00:00.000Z',
+            },
+        }));
         expect(result[0].id).toMatch(/^reservation-3-[a-f0-9]{32}$/);
         expect(result[0].originalId).toBe('reservation-3');
     });
