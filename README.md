@@ -64,6 +64,24 @@ npm test
 zapier-platform validate
 ```
 
+The normal test suite is self-contained and does not contact Commerce7.
+
+### Live staging integration tests
+
+An opt-in suite verifies authentication and the complete customer/reservation
+trigger lifecycle against a Commerce7 staging tenant. It creates uniquely named
+fixtures, disables transaction emails, and deletes the fixtures when finished.
+
+Configure `C7_API_USERNAME` and `C7_API_TOKEN` in `.env`, then run:
+
+```bash
+C7_TEST_TENANT_ID=staging-corollary-wines npm run test:integration
+```
+
+The suite refuses to write to a tenant whose ID does not contain `staging`.
+Keep this suite out of ordinary pull-request runs; use it manually or in a
+scheduled, serial CI job with protected secrets.
+
 ### 6. Push a new Zapier version
 
 ```bash

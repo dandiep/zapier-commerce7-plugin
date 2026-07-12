@@ -39,18 +39,10 @@ const reservationOutputFields = [
     { key: 'reservationDate', label: 'Reservation Date', type: 'datetime' },
     { key: 'sku', label: 'SKU', type: 'string' },
     { key: 'guestCount', label: 'Guest Count', type: 'number' },
-    {
-        key: 'customer', children: [
-            { key: 'firstName', label: 'First Name', type: 'string' },
-            { key: 'lastName', label: 'Last Name', type: 'string' },
-            { key: 'email', label: 'Email', type: 'string' },
-        ]
-    },
-    {
-        key: 'reservation', children: [
-            { key: 'title', label: 'Reservation Type Title', type: 'string' },
-        ]
-    },
+    { key: 'customer__firstName', label: 'Customer First Name', type: 'string' },
+    { key: 'customer__lastName', label: 'Customer Last Name', type: 'string' },
+    { key: 'customer__emails[]email', label: 'Customer Email', type: 'string' },
+    { key: 'reservationType__title', label: 'Reservation Type Title', type: 'string' },
 ];
 
 const createPerform = ({

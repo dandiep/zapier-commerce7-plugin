@@ -233,7 +233,6 @@ module.exports = ({
                 "updatedAt": "2023-08-09T23:22:54.815Z"
             },
             "secondaryCustomers": [],
-            "carts": [],
             "tags": [],
             "connectionInformation": {
                 "customerIpAddress": "165.225.243.31",
