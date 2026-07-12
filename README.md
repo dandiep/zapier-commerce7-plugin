@@ -3,9 +3,28 @@
 This is a Zapier plugin for the Commerce7 API.
 
 ## Available triggers
+
+- Customer Created: instant Commerce7 webhook trigger.
+- Customer Updated: instant webhook trigger, including bulk tag updates.
+- Club Package Created: instant Commerce7 webhook trigger.
+- Reservation Cancelled or Deleted: instant trigger covering both status updates and deletes.
 - New Reservation: emits reservation records when they are created or updated.
 - Closed Reservation: emits reservation records when their status changes to `Closed`.
 - New Customer: emits customer records when they are first created in Commerce7.
+
+## Available searches
+
+- Find Customer by ID, email, or phone.
+- Find Order or Reservation by ID.
+- Find Club Membership by ID or all memberships for a customer.
+- Find Club Package by ID.
+
+## Available actions
+
+- Create or update a customer.
+- Add or remove a customer tag.
+- Add a customer note.
+- Update customer custom fields from a JSON object.
 
 ## Deploy to Zapier
 
@@ -15,8 +34,17 @@ This integration is a Zapier CLI app. Deployment is done with the Zapier Platfor
 
 - A Zapier developer account with access to the integration.
 - Commerce7 API credentials for the shared server-side auth used by this app:
-  - `C7_API_USERNAME`
-  - `C7_API_TOKEN`
+    - `C7_API_USERNAME`
+    - `C7_API_TOKEN`
+- The installed Commerce7 app version must grant:
+    - Customer: Full
+    - Reservation: Full
+    - Order: Read
+    - Club Membership: Read
+    - Club Package: Read
+    - Tag: Full
+    - Note: Full
+    - WebHook: Full
 - Node/npm installed locally.
 
 ### 1. Install dependencies
@@ -68,9 +96,10 @@ The normal test suite is self-contained and does not contact Commerce7.
 
 ### Live staging integration tests
 
-An opt-in suite verifies authentication and the complete customer/reservation
-trigger lifecycle against a Commerce7 staging tenant. It creates uniquely named
-fixtures, disables transaction emails, and deletes the fixtures when finished.
+An opt-in suite verifies authentication, searches, actions, webhook management,
+and the complete customer/reservation trigger lifecycle against a Commerce7
+staging tenant. It creates uniquely named fixtures, disables transaction emails,
+and deletes the fixtures when finished.
 
 Configure `C7_API_USERNAME` and `C7_API_TOKEN` in `.env`, then run:
 
@@ -137,6 +166,6 @@ zapier-platform promote 1.0.0
 - The shared Commerce7 username/token are read from Zapier environment variables by the authentication layer in `authentication.js`.
 - The current CLI warns that the old `zapier` command name is deprecated. Use `zapier-platform` going forward.
 
-This is unsupported, but you're welcome to fork and submit pull requests. 
+This is unsupported, but you're welcome to fork and submit pull requests.
 
 I don't do tech support, but if you have questions, contact dan AT corollarywines.com.
