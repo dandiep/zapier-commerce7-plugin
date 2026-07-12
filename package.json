@@ -1,6 +1,6 @@
 {
     "name": "commerce7-zapier-plugin",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Zapier integration for Commerce7 customers and reservations.",
     "repository": "dandiep/zapier-commerce7-plugin",
     "homepage": "https://github.com/dandiep/zapier-commerce7-plugin",
